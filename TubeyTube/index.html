@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<html>
+<head>
+	<title>Tubey</title>
+	<link rel="icon" href="favicon.ico" type="image/gif" sizes="16x16">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<nav class="navbar navbar-inverse bold">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a href="#" class="navbar-brand">Tubey</a>
+			</div>
+			<ul class = "nav navbar-nav">
+				<li><a href="login.html">Log In</a></li>
+				<li><a href="create.html">Create Account</a></li>
+			</ul>
+		</div>
+	</nav>
+	<div class="container">
+		<iframe align="middle" src="https://www.youtube.com/embed/tp1ZluX4aYs" frameborder="0" id="tube"></iframe>
+		<div class="form-group">
+			<label for="yt" id="url">URL:</label>
+			<input type="url" id="yt" class="form-control">
+			<button type="submit" class="btn btn-default bold"
+			id="enterbutton">Enter</button>
+		</div>
+		<div class="form-group">
+			<label for="search" id="url">Search:</label>
+			<input type="text" id="search" class="form-control">
+			<button type="submit" class="btn btn-default bold"
+			id="searchbutton">Search</button>
+		</div>
+		<div id="scroll">
+			<button type="button" class="btn btn-default skip">Skip</button>
+			<h3>Queue:</h3>
+			<ul class="smooth-scroll"  id="videoqueue">
+			</ul>
+		</div>
+	</div>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="script.js"></script>
+	<script src="https://apis.google.com/js/client.js?onload=onClientLoad"></script>
+</body>
+</html>
