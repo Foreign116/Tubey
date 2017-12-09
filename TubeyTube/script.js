@@ -48,12 +48,9 @@
  		$("#videoplay").append("<li id='" + liIDs[0]+ "li'>"+titles[0]+"</li>");
  	}
  });
-// Your use of the YouTube API must comply with the Terms of Service:
-// https://developers.google.com/youtube/terms
 
-// Helper function to display JavaScript value on HTML page.
 function showResponse(response) {
-	//var responseStrings = JSON.stringify(response,'',2);
+	
 	var title = JSON.stringify(response.items[0].snippet.title);
 	title = title.substring(1,title.length-1);
 	titles.push(title);
@@ -74,18 +71,15 @@ function showResponse(response) {
 
 }
 
-// Called automatically when JavaScript client library is loaded.
 function onClientLoad() {
 	gapi.client.load('youtube', 'v3', onYouTubeApiLoad);
 }
 
-// Called automatically when YouTube API interface is loaded (see line 9).
+
 function onYouTubeApiLoad() {
-    // This API key is intended for use only in this lesson.
-    // See https://goo.gl/PdPA1 to get a key for your own applications.
+    .
     gapi.client.setApiKey('AIzaSyCWjV83fjIzeWNqnY0oSMw3RYdJwmcYro8');
-    //search();
-    // Add code here to test out showResponse():
+ 
     
 }
 function search(title){
