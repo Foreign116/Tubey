@@ -25,7 +25,9 @@ function onPlayerReady(event) {
 }
 function onPlayerStateChange(event) {
 	if (event.data == YT.PlayerState.ENDED) {
-		//  player.loadVideoById("tp1ZluX4aYs", 0);
+		// player.loadVideoById("tp1ZluX4aYs", 0);
+		//check if db is empty and then choose what to do
+		// if empty plays mars argo, if not play next one
 	
 	}
 }
@@ -56,7 +58,6 @@ function search() {
 			var title = JSON.stringify(video['snippet']['title']);
 			title = title.substring(1, title.length - 1);
 			$('#searchList').append('<li class="white-text" onclick="onLIClick(this)" id="' + videoId + '">• ' + title + '</li>')
-
 		});
 
 
@@ -73,6 +74,7 @@ $('#enterSearch').click(function () {
 
 $("#skipButton").click(function(){
 	$('#queueList li').first().remove();
+	//remove off the db, remove first off of db
 });
 
 $('#enterYoutubeUrl').click(function(){
@@ -89,10 +91,12 @@ $('#enterYoutubeUrl').click(function(){
 		var title = JSON.stringify(response['items']['0']['snippet']['title']);
 		title = title.substring(1, title.length - 1);
 		$('#queueList').append('<li class="white-text" id="' + videoId + '">• ' + title + '</li>')
+		// where I enter video info to db, put video id into db
 	  });
 });
 
 
   function onLIClick(liElement){
 	$("#queueList").append(liElement);
+	//insert into db, get lielement id
   }
