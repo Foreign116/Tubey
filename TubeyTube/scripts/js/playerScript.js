@@ -25,7 +25,17 @@ function onPlayerReady(event) {
 }
 function onPlayerStateChange(event) {
 	if (event.data == YT.PlayerState.ENDED) {
-		//  player.loadVideoById("tp1ZluX4aYs", 0);
+		$('#queueList li').first().remove();
+		$.post("../../templates/deleteVideo.php",{});
+		var num_of_lis = $.cookie('rows');
+		if(num_of_lis === 0){
+			player.loadVideoById("tp1ZluX4aYs", 0);
+		}
+		else{
+			var new_youtube_id = $('#queueList li').first().id;
+			player.loadVideoById(new_youtube_id,0);
+		}
+		
 	
 	}
 }
@@ -56,7 +66,6 @@ function search() {
 			var title = JSON.stringify(video['snippet']['title']);
 			title = title.substring(1, title.length - 1);
 			$('#searchList').append('<li class="white-text" onclick="onLIClick(this)" id="' + videoId + '">• ' + title + '</li>')
-
 		});
 
 
@@ -69,10 +78,12 @@ function search() {
 $('#enterSearch').click(function () {
 	$("#searchList").empty();
 	search();
+	
 });
 
 $("#skipButton").click(function(){
 	$('#queueList li').first().remove();
+	$.post("../../templates/deleteVideo.php",{});
 });
 
 $('#enterYoutubeUrl').click(function(){
@@ -88,11 +99,23 @@ $('#enterYoutubeUrl').click(function(){
 		console.log(response);
 		var title = JSON.stringify(response['items']['0']['snippet']['title']);
 		title = title.substring(1, title.length - 1);
-		$('#queueList').append('<li class="white-text" id="' + videoId + '">• ' + title + '</li>')
+		$.post("../../templates/getVideo.php",{
+			youtubeId:videoId,
+			youtubeTitle:title
+		});
 	  });
 });
 
 
   function onLIClick(liElement){
-	$("#queueList").append(liElement);
+	$.post("../../templates/getVideo.php",{
+		youtubeId:liElement.id,
+		youtubeTitle:liElement.val
+	});
+
   }
+
+
+  window.setInterval(function(){
+	$("#queueList").load("../../templates/updateVideo.php")
+  }, 500);
