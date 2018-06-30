@@ -1,3 +1,11 @@
+
+<?php
+
+require 'templates/configs/db.inc.php';
+setcookie('rows', 0, time() + (86400 * 30), "/");
+?>
+
+
 <!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
