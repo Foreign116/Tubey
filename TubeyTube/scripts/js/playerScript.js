@@ -1,6 +1,5 @@
 var player;
 var apikey;
-alert("the first video you place will repeat, will have to skip it");
 
 var tag = document.createElement('script');
 tag.src = "https://www.youtube.com/iframe_api";
@@ -21,9 +20,7 @@ function onYouTubeApiLoad() {
 	gapi.client.setApiKey(apikey);
 
 }
-function onPlayerReady(event) {
-	event.target.playVideo();
-}
+
 function onPlayerStateChange(event) {
 	if (event.data == YT.PlayerState.ENDED) {
 		$.ajax({
@@ -34,12 +31,6 @@ function onPlayerStateChange(event) {
 		if(num_of_lis === 0){
 			player.loadVideoById("tp1ZluX4aYs", 0);
 		}
-		else{
-			var new_youtube_id = $('#queueList li').first().id;
-			player.loadVideoById(new_youtube_id,0);
-		}
-		
-	
 	}
 }
 function onYouTubeIframeAPIReady() {
@@ -47,7 +38,6 @@ function onYouTubeIframeAPIReady() {
 		height: '500',
 		width: '1140',
 		events: {
-			'onReady': onPlayerReady,
 			'onStateChange': onPlayerStateChange
 		}
 	});
@@ -83,24 +73,17 @@ $('#enterSearch').click(function () {
 	
 });
 
-$("#skipButton").click(function(){
+/*$("#skipButton").click(function(){
 	$.ajax({
         type:    "POST",
         url:     "http://tubey-com.stackstaging.com/templates/deleteVideo.php",
        
 	});
-	var video_id = $('#queueList li').first().attr('id');
-	if(video_id != undefined){
-	player.loadVideoById(video_id,0);
-	}
-});
+});*/
 
 $('#enterYoutubeUrl').click(function(){
 	 var youtubeUrl = $("#videoUrl").val();
 	 var videoId  = youtubeUrl.substring(youtubeUrl.length-11,youtubeUrl.length);
-	 if(getCookie('rows')==0){
-		player.loadVideoById(videoId,0);
-	}
 	 request2 = gapi.client.request({
 		'method': 'GET',
 		'path': '/youtube/v3/videos',
@@ -110,14 +93,43 @@ $('#enterYoutubeUrl').click(function(){
 	request2.execute(function(response) {
 		var title = JSON.stringify(response['items']['0']['snippet']['title']);
 		title = title.substring(1, title.length - 1);
-		$.ajax({
-			type:    "POST",
-			url:     "http://tubey-com.stackstaging.com/templates/getVideo.php",
-			data:    {
-				'youtubeId':videoId,
-				'youtubeTitle':title
-			}
-		});
+
+		if(getCookie("rows") == 0){
+
+			$.ajax({
+				type:    "POST",
+				url:     "http://tubey-com.stackstaging.com/templates/getVideo.php",
+				data:    {
+					'youtubeId':videoId,
+					'youtubeTitle':title
+				},
+				success : function(data){
+					setTimeout(function  () {
+						$.ajax({
+							type:    "POST",
+							url:     "http://tubey-com.stackstaging.com/templates/deleteVideo.php",
+						});
+					}, 12);
+				}
+			});
+
+
+
+			
+
+		}
+
+		else{
+			$.ajax({
+				type:    "POST",
+				url:     "http://tubey-com.stackstaging.com/templates/getVideo.php",
+				data:    {
+					'youtubeId':videoId,
+					'youtubeTitle':title
+				}
+			});
+		}
+		
 	  });
 });
 
@@ -125,24 +137,47 @@ $('#enterYoutubeUrl').click(function(){
   function onLIClick(liElement){
 	var title =  $(liElement).text();
 	title = title.substring(1,title.length);
-	if(getCookie('rows')==0){
-		player.loadVideoById(liElement.id,0);
-	}
-	
+	if(getCookie("rows") == 0){
 	$.ajax({
         type:    "POST",
 		url:     "http://tubey-com.stackstaging.com/templates/getVideo.php",
         data:    {
             'youtubeId':liElement.id,
             'youtubeTitle':title
-        }
+		},
+		success : function(data){
+			setTimeout(function  () {
+				$.ajax({
+					type:    "POST",
+					url:     "http://tubey-com.stackstaging.com/templates/deleteVideo.php",
+				});
+			}, 12);
+		}
 	});
+		
+	}
+	else{
+		$.ajax({
+			type:    "POST",
+			url:     "http://tubey-com.stackstaging.com/templates/getVideo.php",
+			data:    {
+				'youtubeId':liElement.id,
+				'youtubeTitle':title
+			}
+		});
+	}
 
   }
 
 
   window.setInterval(function(){
-	$("#queueList").load("http://tubey-com.stackstaging.com/templates/updateVideo.php")
+	$("#queueList").load("http://tubey-com.stackstaging.com/templates/updateVideo.php");
+		var video_id = $('#queueList li').first().attr('id');
+		if(video_id != undefined && (player.getPlayerState() === -1 || player.getPlayerState() === 0)){
+		player.loadVideoById(video_id,0);
+		player.playVideo();
+		}
+	
   }, 100);
 
 
