@@ -27,17 +27,21 @@ function onPlayerStateChange(event) {
 			type:    "POST",
 			url:     "http://tubey-com.stackstaging.com/templates/deleteVideo.php",
 		});
-		var num_of_lis = getCookie('rows');
-		if(num_of_lis === 0){
-			player.loadVideoById("tp1ZluX4aYs", 0);
-		}
+	
 	}
 }
+
+function onPlayerReady(event) {
+	player.pauseVideo();
+}
+
+
 function onYouTubeIframeAPIReady() {
 	player = new YT.Player('player', {
 		height: '500',
 		width: '1140',
 		events: {
+			'onReady': onPlayerReady,
 			'onStateChange': onPlayerStateChange
 		}
 	});
@@ -94,7 +98,6 @@ $('#enterYoutubeUrl').click(function(){
 		var title = JSON.stringify(response['items']['0']['snippet']['title']);
 		title = title.substring(1, title.length - 1);
 
-		if(getCookie("rows") == 0){
 
 			$.ajax({
 				type:    "POST",
@@ -104,31 +107,9 @@ $('#enterYoutubeUrl').click(function(){
 					'youtubeTitle':title
 				},
 				success : function(data){
-					setTimeout(function  () {
-						$.ajax({
-							type:    "POST",
-							url:     "http://tubey-com.stackstaging.com/templates/deleteVideo.php",
-						});
-					}, 12);
+				
 				}
 			});
-
-
-
-			
-
-		}
-
-		else{
-			$.ajax({
-				type:    "POST",
-				url:     "http://tubey-com.stackstaging.com/templates/getVideo.php",
-				data:    {
-					'youtubeId':videoId,
-					'youtubeTitle':title
-				}
-			});
-		}
 		
 	  });
 });
@@ -137,7 +118,6 @@ $('#enterYoutubeUrl').click(function(){
   function onLIClick(liElement){
 	var title =  $(liElement).text();
 	title = title.substring(1,title.length);
-	if(getCookie("rows") == 0){
 	$.ajax({
         type:    "POST",
 		url:     "http://tubey-com.stackstaging.com/templates/getVideo.php",
@@ -146,26 +126,11 @@ $('#enterYoutubeUrl').click(function(){
             'youtubeTitle':title
 		},
 		success : function(data){
-			setTimeout(function  () {
-				$.ajax({
-					type:    "POST",
-					url:     "http://tubey-com.stackstaging.com/templates/deleteVideo.php",
-				});
-			}, 12);
+			
 		}
 	});
-		
-	}
-	else{
-		$.ajax({
-			type:    "POST",
-			url:     "http://tubey-com.stackstaging.com/templates/getVideo.php",
-			data:    {
-				'youtubeId':liElement.id,
-				'youtubeTitle':title
-			}
-		});
-	}
+	
+	
 
   }
 
@@ -173,6 +138,10 @@ $('#enterYoutubeUrl').click(function(){
   window.setInterval(function(){
 	$("#queueList").load("http://tubey-com.stackstaging.com/templates/updateVideo.php");
 		var video_id = $('#queueList li').first().attr('id');
+		
+				setCookie("rows",$("#queueList li").length ,1);
+			
+			
 		if(video_id != undefined && (player.getPlayerState() === -1 || player.getPlayerState() === 0)){
 		player.loadVideoById(video_id,0);
 		player.playVideo();
@@ -187,4 +156,14 @@ $('#enterYoutubeUrl').click(function(){
 	var parts = value.split("; " + name + "=");
 	if (parts.length == 2) return parts.pop().split(";").shift();
   }
+
+  function setCookie(name,value,days) {
+    var expires = "";
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days*24*60*60*1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+}
 
