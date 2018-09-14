@@ -77,13 +77,6 @@ $('#enterSearch').click(function () {
 	
 });
 
-/*$("#skipButton").click(function(){
-	$.ajax({
-        type:    "POST",
-        url:     "http://tubey-com.stackstaging.com/templates/deleteVideo.php",
-       
-	});
-});*/
 
 $('#enterYoutubeUrl').click(function(){
 	 var youtubeUrl = $("#videoUrl").val();
@@ -129,41 +122,11 @@ $('#enterYoutubeUrl').click(function(){
 			
 		}
 	});
-	
-	
-
   }
-
 
   window.setInterval(function(){
 	$("#queueList").load("http://tubey-com.stackstaging.com/templates/updateVideo.php");
-		var video_id = $('#queueList li').first().attr('id');
-		
-				setCookie("rows",$("#queueList li").length ,1);
-			
-			
-		if(video_id != undefined && (player.getPlayerState() === -1 || player.getPlayerState() === 0)){
-		player.loadVideoById(video_id,0);
-		player.playVideo();
-		}
-	
   }, 100);
 
 
-
-  function getCookie(name) {
-	var value = "; " + document.cookie;
-	var parts = value.split("; " + name + "=");
-	if (parts.length == 2) return parts.pop().split(";").shift();
-  }
-
-  function setCookie(name,value,days) {
-    var expires = "";
-    if (days) {
-        var date = new Date();
-        date.setTime(date.getTime() + (days*24*60*60*1000));
-        expires = "; expires=" + date.toUTCString();
-    }
-    document.cookie = name + "=" + (value || "")  + expires + "; path=/";
-}
 
