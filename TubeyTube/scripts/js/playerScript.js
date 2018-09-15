@@ -26,7 +26,10 @@ function onPlayerStateChange(event) {
 		$.ajax({
 			type:    "POST",
 			url:     "http://tubey-com.stackstaging.com/templates/deleteVideo.php",
-		});
+			success: function (data){
+				// when video is deleted, play next video
+		}
+	});
 	
 	}
 }
@@ -100,7 +103,7 @@ $('#enterYoutubeUrl').click(function(){
 					'youtubeTitle':title
 				},
 				success : function(data){
-				
+					// add if no video playing, then play video clicked on
 				}
 			});
 		
@@ -119,7 +122,7 @@ $('#enterYoutubeUrl').click(function(){
             'youtubeTitle':title
 		},
 		success : function(data){
-			
+			// add if no video playing, then play video clicked on
 		}
 	});
   }
