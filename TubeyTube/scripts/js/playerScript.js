@@ -27,7 +27,9 @@ function onPlayerStateChange(event) {
 			type:    "POST",
 			url:     "http://tubey-com.stackstaging.com/templates/deleteVideo.php",
 			success: function (data){
-				// when video is deleted, play next video
+				if(data != "no data"){
+					player.loadVideoById(data);
+				}
 		}
 	});
 	
@@ -35,7 +37,7 @@ function onPlayerStateChange(event) {
 }
 
 function onPlayerReady(event) {
-	player.pauseVideo();
+	player.playVideo();
 }
 
 
@@ -103,7 +105,11 @@ $('#enterYoutubeUrl').click(function(){
 					'youtubeTitle':title
 				},
 				success : function(data){
-					// add if no video playing, then play video clicked on
+					if(data!=="no data" && data !=="not first video"){
+						player.loadVideoById(data);
+						player.playVideo();
+						
+					}
 				}
 			});
 		
@@ -122,7 +128,11 @@ $('#enterYoutubeUrl').click(function(){
             'youtubeTitle':title
 		},
 		success : function(data){
-			// add if no video playing, then play video clicked on
+			if(data!=="no data" && data !=="not first video"){
+				player.loadVideoById(data);
+				player.playVideo();
+			}
+			console.log(data);
 		}
 	});
   }

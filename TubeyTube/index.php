@@ -1,8 +1,6 @@
 
 <?php
-
 require 'templates/configs/db.inc.php';
-setcookie('rows', 0, time() + (86400 * 30), "/");
 ?>
 
 
