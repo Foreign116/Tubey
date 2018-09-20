@@ -20,35 +20,10 @@ function onYouTubeApiLoad() {
 	gapi.client.setApiKey(apikey);
 
 }
-
-function onPlayerStateChange(event) {
-	if (event.data == YT.PlayerState.ENDED) {
-		$.ajax({
-			type:    "POST",
-			url:     "http://tubey-com.stackstaging.com/templates/deleteVideo.php",
-			success: function (data){
-				if(data != "no data"){
-					player.loadVideoById(data);
-				}
-		}
-	});
-	
-	}
-}
-
-function onPlayerReady(event) {
-	player.playVideo();
-}
-
-
 function onYouTubeIframeAPIReady() {
 	player = new YT.Player('player', {
 		height: '500',
-		width: '1140',
-		events: {
-			'onReady': onPlayerReady,
-			'onStateChange': onPlayerStateChange
-		}
+		width: '1140'
 	});
 }
 
@@ -132,14 +107,36 @@ $('#enterYoutubeUrl').click(function(){
 				player.loadVideoById(data);
 				player.playVideo();
 			}
-			console.log(data);
 		}
 	});
   }
-
   window.setInterval(function(){
 	$("#queueList").load("http://tubey-com.stackstaging.com/templates/updateVideo.php");
-  }, 100);
+	if (player.getPlayerState() === 0) {
+		$.ajax({
+			type:    "POST",
+			url:     "http://tubey-com.stackstaging.com/templates/deleteVideo.php",
+			success: function (data){
+				if(data != "no data"){
+					player.loadVideoById(data);
+					player.playVideo();
+				}
+		}
+	});
+	}
+	if(player.getPlayerState()===5){
+		$.ajax({
+			type:    "POST",
+			url:     "http://tubey-com.stackstaging.com/templates/getVideoCue.php",
+			success: function (data){
+				if(data != "no data"){
+					player.loadVideoById(data);
+					player.playVideo();
+				}
+		}
+	});
+	}
+  }, 2000);
 
 
 
