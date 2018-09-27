@@ -1,8 +1,6 @@
 
 <?php
-
 require 'templates/configs/db.inc.php';
-setcookie('rows', 0, time() + (86400 * 30), "/");
 ?>
 
 
@@ -54,8 +52,6 @@ setcookie('rows', 0, time() + (86400 * 30), "/");
 			<div id="queue">
 				<h5 class="flow-text white-text">Queue:</h5>
 				<ul id="queueList"></ul>
-				<button class=" waves-effect waves-light btn white black-text flow-text" type="button" id="skipButton">Skip</button>
-
 			</div>
 		</div>
 	</div>

@@ -20,34 +20,10 @@ function onYouTubeApiLoad() {
 	gapi.client.setApiKey(apikey);
 
 }
-function onPlayerReady(event) {
-	event.target.playVideo();
-}
-function onPlayerStateChange(event) {
-	if (event.data == YT.PlayerState.ENDED) {
-		$('#queueList li').first().remove();
-		$.post("../../templates/deleteVideo.php",{});
-		var num_of_lis = $.cookie('rows');
-		if(num_of_lis === 0){
-			player.loadVideoById("tp1ZluX4aYs", 0);
-		}
-		else{
-			var new_youtube_id = $('#queueList li').first().id;
-			player.loadVideoById(new_youtube_id,0);
-		}
-		
-	
-	}
-}
 function onYouTubeIframeAPIReady() {
 	player = new YT.Player('player', {
 		height: '500',
-		width: '1140',
-		videoId: 'tp1ZluX4aYs',
-		events: {
-			'onReady': onPlayerReady,
-			'onStateChange': onPlayerStateChange
-		}
+		width: '1140'
 	});
 }
 
@@ -65,7 +41,7 @@ function search() {
 			var videoId = JSON.stringify(video['id']['videoId']).substring(1, 12);
 			var title = JSON.stringify(video['snippet']['title']);
 			title = title.substring(1, title.length - 1);
-			$('#searchList').append('<li class="white-text" onclick="onLIClick(this)" id="' + videoId + '">• ' + title + '</li>')
+			$('#searchList').append('<li class="white-text" onclick="onLIClick(this)" value="'+title+'" id="' + videoId + '">• ' + title + '</li>')
 		});
 
 
@@ -81,10 +57,6 @@ $('#enterSearch').click(function () {
 	
 });
 
-$("#skipButton").click(function(){
-	$('#queueList li').first().remove();
-	$.post("../../templates/deleteVideo.php",{});
-});
 
 $('#enterYoutubeUrl').click(function(){
 	 var youtubeUrl = $("#videoUrl").val();
@@ -96,26 +68,75 @@ $('#enterYoutubeUrl').click(function(){
 					'part': 'snippet'}
 	});
 	request2.execute(function(response) {
-		console.log(response);
 		var title = JSON.stringify(response['items']['0']['snippet']['title']);
 		title = title.substring(1, title.length - 1);
-		$.post("../../templates/getVideo.php",{
-			youtubeId:videoId,
-			youtubeTitle:title
-		});
+
+
+			$.ajax({
+				type:    "POST",
+				url:     "http://tubey-com.stackstaging.com/templates/getVideo.php",
+				data:    {
+					'youtubeId':videoId,
+					'youtubeTitle':title
+				},
+				success : function(data){
+					if(data!=="no data" && data !=="not first video"){
+						player.loadVideoById(data);
+						player.playVideo();
+						
+					}
+				}
+			});
+		
 	  });
 });
 
 
   function onLIClick(liElement){
-	$.post("../../templates/getVideo.php",{
-		youtubeId:liElement.id,
-		youtubeTitle:liElement.val
+	var title =  $(liElement).text();
+	title = title.substring(1,title.length);
+	$.ajax({
+        type:    "POST",
+		url:     "http://tubey-com.stackstaging.com/templates/getVideo.php",
+        data:    {
+            'youtubeId':liElement.id,
+            'youtubeTitle':title
+		},
+		success : function(data){
+			if(data!=="no data" && data !=="not first video"){
+				player.loadVideoById(data);
+				player.playVideo();
+			}
+		}
 	});
-
   }
-
-
   window.setInterval(function(){
-	$("#queueList").load("../../templates/updateVideo.php")
-  }, 500);
+	$("#queueList").load("http://tubey-com.stackstaging.com/templates/updateVideo.php");
+	if (player.getPlayerState() === 0) {
+		$.ajax({
+			type:    "POST",
+			url:     "http://tubey-com.stackstaging.com/templates/deleteVideo.php",
+			success: function (data){
+				if(data != "no data"){
+					player.loadVideoById(data);
+					player.playVideo();
+				}
+		}
+	});
+	}
+	if(player.getPlayerState()===5){
+		$.ajax({
+			type:    "POST",
+			url:     "http://tubey-com.stackstaging.com/templates/getVideoCue.php",
+			success: function (data){
+				if(data != "no data"){
+					player.loadVideoById(data);
+					player.playVideo();
+				}
+		}
+	});
+	}
+  }, 2000);
+
+
+
